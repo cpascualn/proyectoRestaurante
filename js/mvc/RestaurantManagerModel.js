@@ -271,7 +271,11 @@ let RestaurantsManager = (function () { //La función anónima devuelve un méto
                     }
                     // recoge la categoria del array para añadir la ya existente
                     cat = this.#categories[cat];
-                    this.#dishes[dispos].categories.push(cat);
+                    // si el plato no tiene la categoria
+                    if (this.#dishes[dispos].categories.findIndex(cat => cat.name === category.name) === -1) {
+                        this.#dishes[dispos].categories.push(cat);
+                    }
+
                 }
                 return this;
             }
@@ -307,7 +311,10 @@ let RestaurantsManager = (function () { //La función anónima devuelve un méto
                         al = this.#allergens.indexOf(allergen);
                     }
                     al = this.#allergens[al];
-                    this.#dishes[dispos].allergens.push(al);
+
+                    if (this.#dishes[dispos].allergens.findIndex(aler => aler.name === allergen.name) === -1) {
+                        this.#dishes[dispos].allergens.push(al);
+                    }
                 }
                 return this;
             }
@@ -344,7 +351,14 @@ let RestaurantsManager = (function () { //La función anónima devuelve un méto
                         this.addMenu(menu);
                         menpos = this.#menus.findIndex(m => m.menu.name === menu.name);
                     }
-                    this.#menus[menpos].dishes.push(actDish);
+                    // si el plato ya esta en el menu no se añade
+                    if (this.#menus[menpos].dishes.findIndex(d => d.dish === dish) === -1) {
+                        this.#menus[menpos].dishes.push(actDish);
+                    } else {
+                        throw new DishExistsException();
+                    }
+
+
                 }
                 return this;
             }
@@ -471,7 +485,7 @@ let RestaurantsManager = (function () { //La función anónima devuelve un méto
 
             // crea el menu , si ya existe no lo crea , devuelve el objeto de la clase menu
             createMenu(name = '', description = '') {
-                let menpos = this.#menus.findIndex(m => m.menu === name);
+                let menpos = this.#menus.findIndex(m => m.menu.name === name);
                 if (menpos === -1) {
                     let menu = new Menu(name, description);
                     this.addMenu(menu);

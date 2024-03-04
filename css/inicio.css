@@ -36,7 +36,7 @@ body {
 .header__nav a {
     text-decoration: none;
     color: #E6F2E8;
-    font-size: 25px;
+    font-size: 20px;
 }
 
 .header__title {
@@ -142,7 +142,6 @@ ul.slider li:target {
     text-align: center;
 }
 
-
 .listado {
     width: 80%;
     height: auto;
@@ -152,7 +151,18 @@ ul.slider li:target {
     row-gap: 15px;
     grid-template-columns: repeat(4, 20%);
     justify-content: center;
-    justify-items: center;
+    margin-bottom: 50px;
+}
+
+.listadoThree {
+    width: 80%;
+    height: auto;
+    padding: 20px;
+    display: grid;
+    column-gap: 5%;
+    row-gap: 15px;
+    grid-template-columns: repeat(3, 20%);
+    justify-content: center;
     margin-bottom: 50px;
 }
 
@@ -193,4 +203,33 @@ ul.slider li:target {
 
 #b-close {
     width: 60%;
+}
+
+
+.form__wrapper {
+    margin: 40px 0;
+    width: 50%;
+    padding: 10px;
+}
+
+.dishForm {
+    display: grid;
+    grid-gap: 10px;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 5px;
 }

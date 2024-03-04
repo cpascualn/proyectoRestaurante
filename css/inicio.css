@@ -29,7 +29,7 @@ body {
     justify-content: space-around;
 }
 
-.header__nav  li {
+.header__nav li {
     margin-right: 30px;
 }
 
@@ -37,6 +37,10 @@ body {
     text-decoration: none;
     color: #E6F2E8;
     font-size: 25px;
+}
+
+.header__title {
+    justify-content: center;
 }
 
 .main {
@@ -170,4 +174,23 @@ ul.slider li:target {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#plato {
+    width: 80%;
+    margin: 25px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#plato img {
+    border: 2px solid black;
+    width: 60%;
+    /* object-fit: scale-down; */
+    margin: 15px auto;
+}
+
+#b-close {
+    width: 60%;
 }

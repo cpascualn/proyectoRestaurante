@@ -1,4 +1,6 @@
+const EXCECUTE_HANDLER = Symbol('excecuteHandler');
 class RestaurantView {
+
 	constructor() {
 		this.categories = document.getElementById('categories');
 		this.list = document.getElementById('listado');
@@ -6,16 +8,47 @@ class RestaurantView {
 		this.menus = document.getElementById('menus');
 		this.headText = document.getElementById("head_text");
 		this.restaurants = document.getElementById("restaurants");
+		this.dishWindows = Array();
+	}
+
+	[EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url,
+		event) {
+		handler(...handlerArguments);
+		const scroll = document.querySelector(scrollElement);
+		if (scroll) scroll.scrollIntoView();
+		//$(scrollElement).get(0).scrollIntoView();
+		history.pushState(data, null, url);
+		event.preventDefault();
 	}
 
 
 	bindInit(handler) { // enlazar el manejador de los botones de inicio con los botones en el html
+
 		document.getElementById('init').addEventListener('click', (event) => {
-			handler();
+			this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#', event);
 		});
 		document.getElementById('logo').addEventListener('click', (event) => {
-			handler();
+			this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#', event);
+
 		});
+	}
+
+	bindShowDish(handler) {
+		const cards = document.querySelectorAll('div.card');
+		for (const card of cards) {
+			let boton = card.querySelector('button.btn')
+			let dish = boton.id;
+			boton.addEventListener('click', (event) => {
+				this[EXCECUTE_HANDLER](
+					handler,
+					[dish],
+					'#listado',
+					{ action: 'showDish', dish },
+					'#',
+					event,
+				);
+			});
+		}
 	}
 
 	bindCategoryList(handler) { // enlazar el manejador de los botones de las categorias con los botones en el html
@@ -23,16 +56,30 @@ class RestaurantView {
 		const links = categoryList.querySelectorAll('div');
 		for (const link of links) {
 			let enlace = link.querySelector("a");
-			enlace.addEventListener('click', () => {
-				handler(enlace.dataset.category);
-				this.modifyBreadcrumb(enlace.dataset.category);
+			const category = enlace.dataset.category;
+			enlace.addEventListener('click', (event) => {
+				this[EXCECUTE_HANDLER](
+					handler,
+					[category],
+					'#listado',
+					{ action: 'showCategoryDishes', category },
+					'#' + category,
+					event,
+				);
 			});
 		}
 	}
 
 	bindAllerList(handler) { // enlazar el manejador del  boton alergenos del menu
 		this.allergens.addEventListener('click', (event) => {
-			handler();
+			this[EXCECUTE_HANDLER](
+				handler,
+				[],
+				'#categories',
+				{ action: 'showAllerList' },
+				'#alergenos',
+				event,
+			);
 		});
 
 	}
@@ -42,16 +89,30 @@ class RestaurantView {
 		const links = allergenList.querySelectorAll('div');
 		for (const link of links) {
 			let enlace = link.querySelector("a");
-			enlace.addEventListener('click', () => {
-				handler(enlace.dataset.allergen);
-				this.modifyBreadcrumb(enlace.dataset.allergen);
+			const allergen = enlace.dataset.allergen;
+			enlace.addEventListener('click', (event) => {
+				this[EXCECUTE_HANDLER](
+					handler,
+					[allergen],
+					'#listado',
+					{ action: 'showAllerDishes', allergen },
+					'#' + allergen,
+					event,
+				);
 			});
 		}
 	}
 
 	bindMenuList(handler) {// enlazar el manejador del  boton menus del menu
 		this.menus.addEventListener('click', (event) => {
-			handler();
+			this[EXCECUTE_HANDLER](
+				handler,
+				[],
+				'#categories',
+				{ action: 'showMenuList' },
+				'#menus',
+				event,
+			);
 		});
 
 	}
@@ -61,9 +122,16 @@ class RestaurantView {
 		const links = menuList.querySelectorAll('div');
 		for (const link of links) {
 			let enlace = link.querySelector("a");
-			enlace.addEventListener('click', () => {
-				handler(enlace.dataset.menu);
-				this.modifyBreadcrumb(enlace.dataset.menu);
+			const menu = enlace.dataset.menu;
+			enlace.addEventListener('click', (event) => {
+				this[EXCECUTE_HANDLER](
+					handler,
+					[menu],
+					'#listado',
+					{ action: 'showMenuDishes', menu },
+					'#' + menu,
+					event,
+				);
 			});
 		}
 	}
@@ -72,11 +140,65 @@ class RestaurantView {
 		const links = this.restaurants.querySelectorAll('li');
 		for (const link of links) {
 			let enlace = link.querySelector("a");
-			enlace.addEventListener('click', () => {
-				handler(enlace.dataset.restaurant);
+			const restaurant = enlace.dataset.restaurant;
+			enlace.addEventListener('click', (event) => {
+				this[EXCECUTE_HANDLER](
+					handler,
+					[restaurant],
+					'#listado',
+					{ action: 'showRestaurant', restaurant },
+					'#' + restaurant,
+					event,
+				);
 			});
 		}
 	}
+
+	bindShowDishInNewWindow(handler) {
+		const botones = document.querySelectorAll('button.btn.btn-primary');
+		for (const boton of botones) {
+			boton.addEventListener('click', (event) => {
+				let dish = event.target.dataset.dname;
+
+				// si la ventana no existe , se puede añadir
+				if (this.dishWindows.find(window => window.name === (dish.replace(/\s/g, '') + "DishWindow")) === undefined) {
+					// crear nueva ventana y recogerla en el array de ventanas
+					let newWin = window.open('dish.html', dish + 'DishWindow',
+						'width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no,menubar=no, location=no');
+					this.dishWindows.push(newWin);
+
+					this.dishWindows[this.dishWindows.length - 1].addEventListener('DOMContentLoaded', () => {
+						this[EXCECUTE_HANDLER](
+							handler,
+							[dish],
+							'#listado',
+							{ action: 'showDishInNewWindow', dish },
+							'#' + dish,
+							event,
+						);
+
+					});
+				}
+			});
+
+		}
+	}
+
+	bindCloseWindows(handler) {
+
+		const bClose = document.getElementById('windowsCloser');
+		bClose.addEventListener('click', (event) => {
+			this[EXCECUTE_HANDLER](
+				handler,
+				[],
+				'.header',
+				{ action: 'closeWindows' },
+				'#',
+				event,
+			);
+		});
+	}
+
 
 	modifyBreadcrumb(category) { // metodo para modificar las migas de pan, si recibe null se borra y vuelve al inicio, si no se añade la nueva ubicacion
 		let bc = document.getElementById('breadcrumb');
@@ -124,7 +246,6 @@ class RestaurantView {
 			this.list.classList.remove('nav');
 
 
-
 		for (const dish of dishes) {
 			const container = document.createElement('div');
 			container.classList.add('card');
@@ -137,7 +258,7 @@ class RestaurantView {
 		    <h5 class="card-title"  > ${dish.name} </h5> 
 			</div>
 			</div>
-			<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#Modal${name}"> SABER MÁS
+			<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#Modal${name}" id="${name}"> SABER MÁS
   			</button>
 
 			  <div class="modal fade" id="Modal${name}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -153,16 +274,46 @@ class RestaurantView {
 					<p><b>INGREDIENTES:</b> ${dish.ingredients}</p>
 				  </div>
 				  <div class="modal-footer">
+				  <button data-dname="${name}" class="btn btn-primary text-uppercase mr-2 px-4">Abrir en nueva ventana</button>
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				  </div>
 				</div>
 			  </div>
 			</div>
-
 			 `);
 
 			this.list.append(container);
 		}
+	}
+
+
+	showDishInNewWindow(dish, message) {
+		// encontrar la ventana llamada dish + 'DishWindow'
+		console.log(this.dishWindows);
+		let window = this.dishWindows.find(window => window.name === (dish.name.replace(/\s/g, '') + "DishWindow"));
+		let platosDiv = window.document.getElementById('plato');
+		let header = window.document.getElementById('h-title');
+		if (platosDiv !== null) {
+			platosDiv.replaceChildren();
+		}
+
+		if (dish !== null) {
+			header.innerHTML = dish.name;
+			window.document.title = `${dish.name}`;
+			platosDiv.insertAdjacentHTML('beforeend', `
+			<img src="${dish.image}" alt>
+			<h5>${dish.description}</h5>
+			<p><b>INGREDIENTES:</b> ${dish.ingredients}</p>
+			<button type="button" class="btn btn-secondary" id="b-close" onclick="window.close()">Close</button>
+			`);
+		} else {
+			if (platosDiv !== null) {
+				platosDiv.insertAdjacentHTML('beforeend', `<div class="row d-flex justify-content-center">${message}</div>`);
+			}
+
+		}
+		window.document.body.scrollIntoView();
+
 	}
 
 	showAllergens(allergens) { // mostrar el menu de alergenos
@@ -226,7 +377,7 @@ class RestaurantView {
 
 	showRestaurant(restaurant) { // mostrar la ficha del restaurante
 		this.headText.innerHTML = restaurant.name;
-		this.modifyBreadcrumb(restaurant.name);
+
 		this.categories.innerHTML = '';
 		this.list.innerHTML = '';
 
@@ -249,6 +400,15 @@ class RestaurantView {
 			${maps}
 			</div>`);
 		this.list.append(container);
+	}
+
+	closeWindows() {
+		for (const window of this.dishWindows) {
+			if (window !== null) {
+				window.close();
+			}
+		}
+
 	}
 
 }

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Inicio</title>
+        <title>Plato</title>
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/inicio.css">
         <link
@@ -12,55 +11,15 @@
             rel="stylesheet"
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous">
-
     </head>
-
     <body>
-        <header class="header">
-            <div class="header__logo">
-                <a href="#inicio" id="logo"><img src="img/logo.png"
-                        alt="Logo"></a>
-            </div>
-            <nav class="header__nav">
-                <ul class="menuu">
-                    <li><a href="#inicio" id="init">Inicio</a></li>
-                    <li><a href="#alergeno" id="allergens">Alergenos</a></li>
-                    <li><a href="#menu" id="menus">Menus</a></li>
-                    <li>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle"
-                                type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Restaurantes
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-dark"
-                                id="restaurants">
-                                <!-- <li><a class="dropdown-item active" href="#">Restaurante1</a></li> -->
-                            </ul>
-                        </div>
-                    </li>
-                    <li><a id="windowsCloser" href="#">Cerrar todas las
-                            ventanas</a></li>
-                </ul>
-            </nav>
+
+        <header class="header header__title">
+            <h1 id="h-title">PLATO</h1>
         </header>
 
-        <main class="main">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb" id="breadcrumb">
-                    <li class="breadcrumb-item">Home</li>
-                    <!-- <li class="breadcrumb-item active" aria-current="page">Library</li> -->
-                </ol>
-            </nav>
-            <h1 class="main__ini" id="head_text">INICIO</h1>
-
-            <div id="categories">
-
-            </div>
-
-            <div class="listado" id="listado">
-
-            </div>
+        <main>
+            <div id="plato"></div>
         </main>
 
         <footer class="footer">
@@ -99,5 +58,4 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     </body>
-
 </html>

@@ -141,7 +141,7 @@ class Coordinate {
     get longitude() { return this.#longitude };
 
     set latitude(latitude) { this.#latitude = latitude; }
-    set latitude(longitude) { this.#longitude = longitude; }
+    set longitude(longitude) { this.#longitude = longitude; }
 
     toString() {
         return `Coordinate { 

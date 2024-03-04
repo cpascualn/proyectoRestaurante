@@ -1,0 +1,173 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f2f1e6;
+    display: grid;
+    grid-template-areas: "header"
+        "content"
+        "footer";
+    grid-template-rows: auto 1fr auto;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #E6F2E8;
+    padding: 0px 20px;
+}
+
+
+.header__nav .menuu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    justify-content: space-around;
+}
+
+.header__nav  li {
+    margin-right: 30px;
+}
+
+.header__nav a {
+    text-decoration: none;
+    color: #E6F2E8;
+    font-size: 25px;
+}
+
+.main {
+    grid-area: content;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.main__slider {
+    margin: auto;
+    width: 100%;
+    height: 750px;
+    margin-bottom: 25px;
+}
+
+
+
+ul.slider {
+    position: relative;
+    width: 100%;
+    height: 700px;
+}
+
+ul.slider li {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    opacity: 0;
+    width: inherit;
+    height: inherit;
+    transition: opacity .5s;
+    background: #fff;
+}
+
+ul.slider li img {
+    width: 100%;
+    height: 700px;
+    object-fit: fill;
+    background-color: #E6F2E8;
+}
+
+ul.slider li:first-child {
+    opacity: 1;
+    /*Mostramos el primer <li>*/
+}
+
+ul.slider li:target {
+    opacity: 1;
+    /*Mostramos el <li> del enlace que pulsemos*/
+}
+
+.menu {
+    text-align: center;
+    margin: 20px;
+    padding: 0;
+}
+
+.menu li {
+    display: inline-block;
+    text-align: center;
+}
+
+.menu li a {
+    display: inline-block;
+    color: #E6F2E8;
+    text-decoration: none;
+    background-color: #333;
+    padding: 10px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    border-radius: 100%;
+}
+
+.main__ini {
+    font-size: 80px;
+}
+
+.main__container {
+    width: 95%;
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    padding: 20px;
+}
+
+.container__img img {
+    width: 100%;
+    height: 100%;
+}
+
+.container__txt {
+    background-color: #333;
+    color: #E6F2E8;
+    padding: 50px;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+
+.listado {
+    width: 80%;
+    height: auto;
+    padding: 20px;
+    display: grid;
+    column-gap: 5%;
+    row-gap: 15px;
+    grid-template-columns: repeat(4, 20%);
+    justify-content: center;
+    justify-items: center;
+    margin-bottom: 50px;
+}
+
+.footer {
+    grid-area: footer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #E6F2E8;
+    padding: 10px 20px;
+}
+
+.footer div {
+    padding: 25px;
+}
+
+.footer figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

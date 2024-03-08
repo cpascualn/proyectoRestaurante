@@ -2,10 +2,11 @@
 import { RestaurantsManager } from './RestaurantManagerModel.js';
 import RestaurantController from './RestaurantController.js';
 import RestaurantView from './RestaurantView.js';
+import AuthenticationService from '../authentication/authentication.js';
 
 const RestaurantApp = new RestaurantController(
     RestaurantsManager.getInstance(),
-    new RestaurantView());
+    new RestaurantView(), AuthenticationService.getInstance());
 
 const historyActions = {
     init: () => {
@@ -40,7 +41,9 @@ const historyActions = {
     },
     closeWindows: () => {
         RestaurantApp.handleCloseWindows();
-    }
+    },
+    login: () => { ManagerApp.handleLoginForm() }
+
 };
 
 window.addEventListener('popstate', (event) => {

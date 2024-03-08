@@ -1,11 +1,19 @@
-import { Dish, Category, Allergen, Menu, Restaurant, Coordinate } from './objetos.js';
+import { Dish, Category, Allergen, Menu, Restaurant, Coordinate } from '../entities/objetos.js';
+import { getCookie } from '../util.js';
+
 const MODEL = Symbol('RestaurantModel');
 const VIEW = Symbol('RestaurantView');
+const LOAD_MANAGER_OBJECTS = Symbol('Load Manager Objects');
+const AUTH = Symbol('AUTH');
+const USER = Symbol('USER');
 
 class RestaurantController {
-    constructor(modelRestaurant, viewRestaurant) {
+    constructor(modelRestaurant, viewRestaurant, auth) {
         this[MODEL] = modelRestaurant;
         this[VIEW] = viewRestaurant;
+        this[AUTH] = auth;
+        this[USER] = null;
+
         // Eventos iniciales del Controlador
         this.onLoad();
         this.onInit();
@@ -22,24 +30,8 @@ class RestaurantController {
         }
     }
 
-    onInit = () => { // cada vez que se pulsa el boton de inicio se muestran de nuevo las categorias , 3 platos rand y se reinicia el breadcrumb
-        try {
-            this[VIEW].showCategories(this[MODEL].categories);
-            this[VIEW].showDishes(this.RandDishes());
-            this[VIEW].bindCategoryList(this.handleCategoryList);
-            this[VIEW].modifyBreadcrumb(null);
-            this[VIEW].bindShowDish(this.handleShowDish);
-            this[VIEW].hideForm();
-        } catch (error) {
+    [LOAD_MANAGER_OBJECTS]() {
 
-        }
-    };
-
-    handleInit = () => { // cuando se pulsa inicio se llama a oninit
-        this.onInit();
-    }
-
-    onLoad = () => { // cargar los objetos
         let cat1 = this[MODEL].createCategory('Carne', 'disfrute de nuestras carnes');
         let dish11 = this[MODEL].createDish('Chuleton Cordero', 'Chuleton de Cordero con patatas cocidas en salsa de tomate ', ['cordero', 'tomate', 'patata cocida'], 'img/Platos/cordero.jpg');
         let dish12 = this[MODEL].createDish('Albondigas', 'Albondigas con tomate y patatas fritas', ['carne cerdo', 'tomate', 'patata frita'], 'img/Platos/albondigas.jpg');
@@ -85,6 +77,39 @@ class RestaurantController {
         this[MODEL].assignDishToMenu(menu2, dish13, dish23, dish31)
         this[MODEL].assignDishToMenu(menu3, dish11, dish22, dish34)
 
+    }
+
+
+    onInit = () => { // cada vez que se pulsa el boton de inicio se muestran de nuevo las categorias , 3 platos rand y se reinicia el breadcrumb
+        try {
+            this[VIEW].showCategories(this[MODEL].categories);
+            this[VIEW].showDishes(this.RandDishes());
+            this[VIEW].bindCategoryList(this.handleCategoryList);
+            this[VIEW].modifyBreadcrumb(null);
+            this[VIEW].bindShowDish(this.handleShowDish);
+            this[VIEW].hideForm();
+        } catch (error) {
+
+        }
+    };
+
+    handleInit = () => { // cuando se pulsa inicio se llama a oninit
+        this.onInit();
+    }
+
+    onLoad = () => { // cargar los objetos
+
+        if (getCookie('accetedCookieMessage') !== 'true') {
+            this[VIEW].showCookiesMessage();
+        }
+
+        if (getCookie('activeUser')) {
+        } else {
+            this[VIEW].showIdentificationLink();
+            this[VIEW].bindIdentificationLink(this.handleLoginForm);
+        }
+
+        this[LOAD_MANAGER_OBJECTS]();
 
         // mostrar el menu de categorias , 3 platos aleatorios y cargar el desplegable con los restaurantes
         try {
@@ -92,7 +117,7 @@ class RestaurantController {
             this[VIEW].showDishes(this.RandDishes());
             this[VIEW].loadRestaurants(this[MODEL].restaurants);
         } catch (error) {
-
+            console.log(error);
         }
     };
 
@@ -370,5 +395,11 @@ class RestaurantController {
     handleCloseWindows = () => {
         this[VIEW].closeWindows();
     }
+
+    handleLoginForm = () => {
+        this[VIEW].showLogin();
+        //this[VIEW].bindLogin(this.handleLogin);
+    };
+
 }
 export default RestaurantController;

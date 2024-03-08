@@ -3,8 +3,8 @@ import {
     DishExistsException, DishNotRegisterdException, DishNotRegisterdOnMenuException, MenuExistsException, MenuNotRegisterdException, NotAAllergenException, NotACategoryException,
     NotADishException, NotAMenuException, NotARestaurantException, NullAllergenException, NullCategoryException, NullDishException, NullMenuException, NullRestaurantException,
     RestaurantExistsException, RestaurantNotRegisterdException
-} from './exceptions.js';
-import { Dish, Category, Allergen, Menu, Restaurant, Coordinate } from './objetos.js';
+} from '../exceptions.js';
+import { Dish, Category, Allergen, Menu, Restaurant, Coordinate } from '../entities/objetos.js';
 export { RestaurantsManager };
 let RestaurantsManager = (function () { //La función anónima devuelve un método getInstance que permite obtener el objeto único
     let instantiated; //Objeto con la instancia única RestaurantsManager

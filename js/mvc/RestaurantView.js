@@ -1,7 +1,8 @@
 import { newDishValidation, removeDishValidation, manageMenuValidation, manageCatValidation, addRestValidation, modCategoryValidation } from '../validation.js';
-import { setCookie } from '../util.js';
+import { getCookie, setCookie } from '../util.js';
 
 const EXCECUTE_HANDLER = Symbol('excecuteHandler');
+let usuarioTemporal = false;
 class RestaurantView {
 
 	constructor() {
@@ -14,6 +15,7 @@ class RestaurantView {
 		this.dishWindows = Array();
 		this.formWrap = document.getElementById("form__wrapper");
 		this.loginDiv = document.getElementById("loginDiv");
+
 	}
 
 	[EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url,
@@ -41,7 +43,7 @@ class RestaurantView {
 	bindShowDish(handler) {
 		const cards = document.querySelectorAll('div.card');
 		for (const card of cards) {
-			let boton = card.querySelector('button.btn')
+			let boton = card.querySelector('button.btn.btn-light')
 			let dish = boton.id;
 			boton.addEventListener('click', (event) => {
 				this[EXCECUTE_HANDLER](
@@ -280,12 +282,29 @@ class RestaurantView {
 			container.classList.add('card');
 
 			let name = dish.name.replace(/\s/g, '');
+
+			const userCookie = getCookie('activeUser');
+			let bookmark = document.createElement("i");
+
+			let favoritos = JSON.parse(localStorage.getItem('favDishes'));
+
+			if (favoritos !== null) {
+				if (favoritos.findIndex(name => name == dish.name) !== -1) {
+					bookmark.className = "bi bi-bookmark-star-fill";
+				} else {
+					bookmark.className = "bi bi-bookmark-star";
+				}
+			} else {
+				bookmark.className = "bi bi-bookmark-star";
+			}
 			// mostrar un boton de boostrap que abre un modal con la ficha del plato
-			container.insertAdjacentHTML('beforeend', `<img src="${dish.image}" class="card-img-top" alt="...">
+			container.insertAdjacentHTML('beforeend', ` <img src="${dish.image}" class="card-img-top" alt="...">
 			<div class="card-body">
-		    <h5 class="card-title"  > ${dish.name} </h5> 
+		    <h5 class="card-title"  > ${dish.name} </h5>  
+			${userCookie || usuarioTemporal ? `<button type="button" class="btn btn-success" data-dname="${dish.name}">${bookmark.outerHTML}</button>` : ``}
 			</div>
 			</div>
+			
 			<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#Modal${name}" id="${name}"> SABER MÁS
   			</button>
 
@@ -312,6 +331,48 @@ class RestaurantView {
 
 			this.list.append(container);
 		}
+	}
+
+	bindFavouriteDish() {
+		let botones = document.querySelectorAll('.card button.btn.btn-success');
+		let favoritos;
+		botones.forEach(boton => {
+			boton.addEventListener('click', (event) => {
+				let bookmark = boton.querySelector('i');
+				let dishName = boton.dataset.dname;
+				favoritos = JSON.parse(localStorage.getItem('favDishes'));
+				// si no estaba añadido se añade, y si estaba añadido se borra
+				if (bookmark.classList.contains('bi') && bookmark.classList.contains('bi-bookmark-star')) {
+					// si no existe crearlo
+					if (favoritos === null) {
+						favoritos = [];
+						favoritos.push(dishName);
+						localStorage.setItem('favDishes', JSON.stringify(favoritos));
+					} else {
+						favoritos.push(dishName);
+						localStorage.setItem('favDishes', JSON.stringify(favoritos));
+					}
+					bookmark.className = "bi bi-bookmark-star-fill";
+					event.preventDefault();
+				} else {
+					// eliminar del localStorage
+					if (favoritos !== null) {
+						let dishIndex = favoritos.findIndex(name => name == dishName);
+						// eliminar de favoritos
+						if (dishIndex !== -1) favoritos.splice(dishIndex, 1);
+						if (favoritos.length == 0) {
+							localStorage.removeItem("favDishes")
+						} else {
+							localStorage.setItem('favDishes', JSON.stringify(favoritos));
+						}
+					}
+					bookmark.className = "bi bi-bookmark-star";
+					event.preventDefault();
+				}
+
+			});
+		});
+
 	}
 
 
@@ -1177,7 +1238,7 @@ creada.</div>`,
 	bindIdentificationLink(handler) {
 		const login = document.getElementById('login');
 		login.addEventListener('click', (event) => {
-			this[EXCECUTE_HANDLER](handler, [], '.main', { action: 'login' }, '#',
+			this[EXCECUTE_HANDLER](handler, [], '.main', { action: 'login' }, '#login',
 				event);
 		});
 	}
@@ -1225,7 +1286,7 @@ creada.</div>`,
 	bindLogin(handler) {
 		const form = document.forms.fLogin;
 		form.addEventListener('submit', (event) => {
-			handler(form.username.value, form.password.value);
+			handler(form.username.value, form.password.value, form.remember.checked);
 			event.preventDefault();
 		});
 	}
@@ -1245,20 +1306,83 @@ creada.</div>`,
 	}
 
 	initHistory() {
-		history.replaceState({ action: 'init' }, null);
+		history.replaceState({ action: 'init' },null, "#");
 	}
 
 	showAuthUserProfile(user) {
 		const userArea = document.getElementById('userArea');
 		userArea.replaceChildren();
 		userArea.insertAdjacentHTML('afterbegin', `<div class="account d-flex
-		mx-2 flex-column" style="text-align: right">
-		${user.username} <a id="aCloseSession" href="#">Cerrar sesión</a>
+		mx-2 flex-column" style="text-align: right"> HOLA,
+		${user.username} <a id="aCloseSession" href="#">DESCONECTAR</a>
 		</div>
 		<div class="image">
 		<img alt="${user.username}" src="img/user.jpg"/>
 		</div>`);
 	}
+
+	setUserCookie(user) {
+		setCookie('activeUser', user.username, 1);
+	}
+
+	setTemporalUser(opcion) {
+		usuarioTemporal = opcion;
+	}
+
+
+
+	deleteUserCookie() {
+		setCookie('activeUser', '', 0);
+	}
+
+	removeAdminMenu() {
+		const adminMenu = document.getElementById('gestionesForms');
+		if (adminMenu) adminMenu.parentElement.remove();
+	}
+
+	bindCloseSession(handler) {
+		document.getElementById('aCloseSession').addEventListener('click',
+			(event) => {
+				handler();
+				event.preventDefault();
+			});
+	}
+
+
+	showViewFavourites() {
+
+		let headMenu = document.getElementById("headMenu");
+		headMenu.insertAdjacentHTML('beforeend', `
+		<li><a href="#favoritos" id="favDishes">FAVORITOS</a></li>
+		`);
+	}
+	removeViewFavourites() {
+		const favDishes = document.getElementById('favDishes');
+		if (favDishes) favDishes.parentElement.remove();
+	}
+
+	bindShowFavourites(handler) {
+		const favLink = document.getElementById('favDishes');
+		favLink.addEventListener('click', (event) => {
+			// let favoritos = JSON.parse(localStorage.getItem('favDishes'));
+			this.headText.innerHTML = "PLATOS FAVORITOS";
+			this.categories.replaceChildren();
+			let favoritos = JSON.parse(localStorage.getItem('favDishes'));
+			this[EXCECUTE_HANDLER](
+				handler,
+				[favoritos],
+				'.listado',
+				{ action: 'showFavourites', favoritos },
+				'#favoritos',
+				event);
+		});
+	}
+
+	headtxtFavoritos() {
+		this.headText.innerHTML = "PLATOS FAVORITOS";
+		this.categories.replaceChildren();
+	}
+
 
 
 

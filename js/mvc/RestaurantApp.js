@@ -42,7 +42,13 @@ const historyActions = {
     closeWindows: () => {
         RestaurantApp.handleCloseWindows();
     },
-    login: () => { ManagerApp.handleLoginForm() }
+    login: () => {
+        RestaurantApp.handleLoginForm()
+    },
+    showFavourites: (state) => {
+        RestaurantApp.handleShowFavourites(state.favoritos);
+    },
+
 
 };
 

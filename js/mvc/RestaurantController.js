@@ -78,6 +78,7 @@ class RestaurantController {
             this[VIEW].showDishes(this.RandDishes());
             this[VIEW].bindCategoryList(this.handleCategoryList);
             this[VIEW].bindShowDish(this.handleShowDish);
+            this[VIEW].bindFavouriteDish();
             this[VIEW].modifyBreadcrumb(null);
             this[VIEW].hideForm();
             this[VIEW].hideLogin();
@@ -91,23 +92,26 @@ class RestaurantController {
     }
 
     onLoad = () => { // cargar los objetos
+        this[LOAD_MANAGER_OBJECTS]();
 
         if (getCookie('accetedCookieMessage') !== 'true') {
             this[VIEW].showCookiesMessage();
         }
+        const userCookie = getCookie('activeUser');
 
-        if (getCookie('activeUser')) {
+        if (userCookie) {
+            const user = this[AUTH].getUser(userCookie);
+            if (user) {
+                this[USER] = user;
+                this.onOpenSession();
+            }
         } else {
-            this[VIEW].showIdentificationLink();
-            this[VIEW].bindIdentificationLink(this.handleLoginForm);
+            this.onCloseSession();
         }
-
-        this[LOAD_MANAGER_OBJECTS]();
 
         // mostrar el menu de categorias , 3 platos aleatorios y cargar el desplegable con los restaurantes
         try {
             this[VIEW].showCategories(this[MODEL].categories);
-            this[VIEW].showDishes(this.RandDishes());
             this[VIEW].loadRestaurants(this[MODEL].restaurants);
             // Enlazamos handlers con la vista
             this[VIEW].bindAllerList(this.handleAllergenList);
@@ -144,6 +148,7 @@ class RestaurantController {
         this[VIEW].showCategories(this[MODEL].categories);
         this[VIEW].bindCategoryList(this.handleCategoryList);
         this[VIEW].bindShowDish(this.handleShowDish);
+        this[VIEW].bindFavouriteDish();
         this[VIEW].hideForm();
         this[VIEW].hideLogin();
     }
@@ -153,6 +158,7 @@ class RestaurantController {
         this[VIEW].bindAllergen(this.handleAllergenDishes);
         this[VIEW].modifyBreadcrumb(null);
         this[VIEW].bindShowDish(this.handleShowDish);
+        this[VIEW].bindFavouriteDish();
         this[VIEW].hideForm();
         this[VIEW].hideLogin();
     }
@@ -163,6 +169,7 @@ class RestaurantController {
         this[VIEW].showDishes(dishs);
         this[VIEW].modifyBreadcrumb(allergenName);
         this[VIEW].bindShowDish(this.handleShowDish);
+        this[VIEW].bindFavouriteDish();
         this[VIEW].hideForm();
         this[VIEW].hideLogin();
     }
@@ -184,6 +191,7 @@ class RestaurantController {
         this[VIEW].showDishes(dishs);
         this[VIEW].modifyBreadcrumb(menuName);
         this[VIEW].bindShowDish(this.handleShowDish);
+        this[VIEW].bindFavouriteDish();
         this[VIEW].hideForm();
         this[VIEW].hideLogin();
     }
@@ -407,29 +415,60 @@ class RestaurantController {
         this[VIEW].bindLogin(this.handleLogin);
     };
 
-    handleLogin = (username, password) => {
+    handleLogin = (username, password, remember) => {
         if (this[AUTH].validateUser(username, password)) {
             this[USER] = this[AUTH].getUser(username);
+            if (remember) {
+                this[VIEW].setUserCookie(this[USER]);
+            } else {
+                // controlar que aun que el usuario no este recordado y por tanto no tenga cookie, si pueda tener las funcionalidades de admin
+                this[VIEW].setTemporalUser(true);
+            }
             this.onOpenSession();
         } else {
-            try {
-                this[VIEW].showInvalidUserMessage();
-            } catch (error) {
-                console.log(error);
-            }
-
+            this[VIEW].showInvalidUserMessage();
         }
     };
 
-    onOpenSession() {
+    onOpenSession = () => {
         this.onInit();
         this[VIEW].initHistory();
         this[VIEW].showAuthUserProfile(this[USER]);
+        this[VIEW].bindCloseSession(this.handleCloseSession);
         this[VIEW].showAdminMenu();
+        this[VIEW].showViewFavourites();
+        this[VIEW].bindShowFavourites(this.handleShowFavourites);
         this[VIEW].bindManagement(this.handleShowForm);
     }
 
+    handleCloseSession = () => {
+        this.onCloseSession();
+        this.onInit();
+        this[VIEW].initHistory();
+    };
 
+    onCloseSession() {
+        this[USER] = null;
+        this[VIEW].deleteUserCookie();
+        this[VIEW].showIdentificationLink();
+        this[VIEW].bindIdentificationLink(this.handleLoginForm);
+        this[VIEW].removeAdminMenu();
+        this[VIEW].removeViewFavourites();
+        this[VIEW].setTemporalUser(false);
+    }
 
+    handleShowFavourites = (favoritos) => {
+        
+        if (favoritos) {
+            let platosFavoritos = [...this[MODEL].dishes].filter(dish => favoritos.includes(dish.dish.name)).map(dish => dish.dish);
+            this[VIEW].showDishes(platosFavoritos);
+            this[VIEW].bindFavouriteDish();
+            this[VIEW].bindShowDish(this.handleShowDish);
+            this[VIEW].headtxtFavoritos();
+        } else {
+            this[VIEW].showDishes([]);
+        }
+        this[VIEW].hideForm();
+    }
 }
 export default RestaurantController;

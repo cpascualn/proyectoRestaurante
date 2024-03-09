@@ -261,7 +261,7 @@ button.deny:hover {
     width: 350px;
     margin-top: 20px;
     margin-bottom: 20px;
-    background: #faa541;
+    background: #333;
     position: relative;
     display: flex;
     justify-content: center;
@@ -299,7 +299,7 @@ button.deny:hover {
 
 .login_btn {
     width: 100%;
-    background: #c0392b !important;
+    background: #0A58CA !important;
     color: white !important;
 }
 
@@ -313,7 +313,7 @@ button.deny:hover {
 }
 
 .input-group-text {
-    background: #c0392b !important;
+    background: #0D6EFD !important;
     color: white !important;
     border: 0 !important;
     border-radius: 0.25rem 0 0 0.25rem !important;
@@ -325,10 +325,23 @@ button.deny:hover {
     outline: 0px !important;
 }
 
-.custom-checkbox .custom-control-input:checked~.custom-controllabel::before {
-    background-color: #c0392b !important;
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+    background-color: #0D6EFD !important;
 }
 
-.bi {
-    color: #faa541;
+.custom-control-label {
+    display: inline !important;
+    color: white;
+}
+
+#userArea a {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+
+header .image img {
+    width: 75px !important;
+    height: 75px !important;
+    border-radius: 100px;
 }

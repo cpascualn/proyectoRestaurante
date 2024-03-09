@@ -13,6 +13,7 @@ class RestaurantView {
 		this.restaurants = document.getElementById("restaurants");
 		this.dishWindows = Array();
 		this.formWrap = document.getElementById("form__wrapper");
+		this.loginDiv = document.getElementById("loginDiv");
 	}
 
 	[EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url,
@@ -441,6 +442,52 @@ class RestaurantView {
 	hideForm() {
 		document.getElementById("form__wrapper").replaceChildren();
 	}
+
+	hideLogin() {
+		this.loginDiv.replaceChildren();
+	}
+
+
+	showAdminMenu() {
+		let headMenu = document.getElementById("headMenu");
+		headMenu.insertAdjacentHTML('beforeend', `
+		<li>
+		<div class="dropdown" id="gestionesForms">
+			<button class="btn btn-secondary dropdown-toggle"
+				type="button" data-bs-toggle="dropdown"
+				aria-expanded="false">
+				Gestion
+			</button>
+			<ul class="dropdown-menu dropdown-menu-dark"
+				id="gestiones">
+				<li><a class="dropdown-item" href="#add-dish"
+						data-gestion="addDish">Añadir
+						Plato</a></li>
+				<li><a class="dropdown-item" href="#remove-dish"
+						data-gestion="removeDish">Borrar
+						Plato</a></li>
+				<li><a class="dropdown-item"
+						href="#gestionar-menu"
+						data-gestion="manageMenu">Gestionar
+						Menus</a></li>
+				<li><a class="dropdown-item"
+						href="#gestion-categoria"
+						data-gestion="manageCat">Gestionar
+						Categorias</a></li>
+				<li><a class="dropdown-item"
+						href="#add-restaurant"
+						data-gestion="addRest">Añadir
+						Restaurante</a></li>
+				<li><a class="dropdown-item"
+						href="#modify-category"
+						data-gestion="modifyCat">Modificar
+						Categoria</a></li>
+			</ul>
+		</div>
+	</li>
+		`);
+	}
+
 
 
 	addDishForm(categories, allergens) {
@@ -1130,13 +1177,17 @@ creada.</div>`,
 	bindIdentificationLink(handler) {
 		const login = document.getElementById('login');
 		login.addEventListener('click', (event) => {
-			this[EXCECUTE_HANDLER](handler, [], 'main', { action: 'login' }, '#',
+			this[EXCECUTE_HANDLER](handler, [], '.main', { action: 'login' }, '#',
 				event);
 		});
 	}
 
 	showLogin() {
-		this.main.replaceChildren();
+		this.formWrap.replaceChildren();
+		this.headText.innerHTML = 'ACCEDER';
+		this.categories.innerHTML = '';
+		this.list.innerHTML = '';
+		this.loginDiv.replaceChildren();
 		const login = `<div class="container h-100">
 				<div class="d-flex justify-content-center h-100">
 					<div class="user_card">
@@ -1168,8 +1219,47 @@ creada.</div>`,
 					</div>
 				</div>
 			</div>`;
-		this.main.insertAdjacentHTML('afterbegin', login);
+		this.loginDiv.insertAdjacentHTML('afterbegin', login);
 	}
+
+	bindLogin(handler) {
+		const form = document.forms.fLogin;
+		form.addEventListener('submit', (event) => {
+			handler(form.username.value, form.password.value);
+			event.preventDefault();
+		});
+	}
+
+	showInvalidUserMessage() {
+		let invalidUserMessage = document.getElementById("invalidUserMessage");
+		//  eliminar el mensaje para que no se vaya mostrando varias veces
+		if (invalidUserMessage) {
+			invalidUserMessage.parentNode.removeChild(invalidUserMessage);
+		}
+		this.loginDiv.insertAdjacentHTML('beforeend', `<div class="container my3" id="invalidUserMessage"><div class="alert alert-warning" role="alert">
+		<strong>El usuario y la contraseña no son válidos. Inténtelo
+		nuevamente.</strong>
+		</div></div>`);
+		document.forms.fLogin.reset();
+		document.forms.fLogin.username.focus();
+	}
+
+	initHistory() {
+		history.replaceState({ action: 'init' }, null);
+	}
+
+	showAuthUserProfile(user) {
+		const userArea = document.getElementById('userArea');
+		userArea.replaceChildren();
+		userArea.insertAdjacentHTML('afterbegin', `<div class="account d-flex
+		mx-2 flex-column" style="text-align: right">
+		${user.username} <a id="aCloseSession" href="#">Cerrar sesión</a>
+		</div>
+		<div class="image">
+		<img alt="${user.username}" src="img/user.jpg"/>
+		</div>`);
+	}
+
 
 
 }

@@ -17,17 +17,9 @@ class RestaurantController {
         // Eventos iniciales del Controlador
         this.onLoad();
         this.onInit();
-        // Enlazamos handlers con la vista
-        try {
-            this[VIEW].bindInit(this.handleInit);
-            this[VIEW].bindAllerList(this.handleAllergenList);
-            this[VIEW].bindMenuList(this.handleMenuList);
-            this[VIEW].bindRestaurant(this.handleRestaurants);
-            this[VIEW].bindManagement(this.handleShowForm);
-            this[VIEW].bindCloseWindows(this.handleCloseWindows);
-        } catch (error) {
-            console.log(error);
-        }
+
+
+        this[VIEW].bindInit(this.handleInit);
     }
 
     [LOAD_MANAGER_OBJECTS]() {
@@ -85,11 +77,12 @@ class RestaurantController {
             this[VIEW].showCategories(this[MODEL].categories);
             this[VIEW].showDishes(this.RandDishes());
             this[VIEW].bindCategoryList(this.handleCategoryList);
-            this[VIEW].modifyBreadcrumb(null);
             this[VIEW].bindShowDish(this.handleShowDish);
+            this[VIEW].modifyBreadcrumb(null);
             this[VIEW].hideForm();
+            this[VIEW].hideLogin();
         } catch (error) {
-
+            console.log(error);
         }
     };
 
@@ -116,6 +109,11 @@ class RestaurantController {
             this[VIEW].showCategories(this[MODEL].categories);
             this[VIEW].showDishes(this.RandDishes());
             this[VIEW].loadRestaurants(this[MODEL].restaurants);
+            // Enlazamos handlers con la vista
+            this[VIEW].bindAllerList(this.handleAllergenList);
+            this[VIEW].bindMenuList(this.handleMenuList);
+            this[VIEW].bindRestaurant(this.handleRestaurants);
+            this[VIEW].bindCloseWindows(this.handleCloseWindows);
         } catch (error) {
             console.log(error);
         }
@@ -147,6 +145,7 @@ class RestaurantController {
         this[VIEW].bindCategoryList(this.handleCategoryList);
         this[VIEW].bindShowDish(this.handleShowDish);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
     handleAllergenList = () => {// manejar cuando se pulsa  alergenos en el menu para mostrar un nuevo menu con los alergenos disponibles
@@ -155,6 +154,7 @@ class RestaurantController {
         this[VIEW].modifyBreadcrumb(null);
         this[VIEW].bindShowDish(this.handleShowDish);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
     handleAllergenDishes = (allergenName) => { // manejar cuando se pulsa un alergeno del nuevo menu de alergenos generado  y mostrar sus platos
@@ -164,6 +164,7 @@ class RestaurantController {
         this[VIEW].modifyBreadcrumb(allergenName);
         this[VIEW].bindShowDish(this.handleShowDish);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
 
@@ -173,6 +174,7 @@ class RestaurantController {
         this[VIEW].bindMenu(this.handleMenuDishes);
         this[VIEW].modifyBreadcrumb(null);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
 
@@ -183,6 +185,7 @@ class RestaurantController {
         this[VIEW].modifyBreadcrumb(menuName);
         this[VIEW].bindShowDish(this.handleShowDish);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
     handleRestaurants = (restName) => { // mostrar restaurante pulsado en el menu
@@ -190,12 +193,14 @@ class RestaurantController {
         this[VIEW].showRestaurant(restaurant);
         this[VIEW].modifyBreadcrumb(restName);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
     handleShowDish = (dishName) => {
         // cuando muestras un plato, asignar enlace al boton nueva ventana
         this[VIEW].bindShowDishInNewWindow(this.handleShowDishInNewWindow);
         this[VIEW].hideForm();
+        this[VIEW].hideLogin();
     }
 
     handleShowDishInNewWindow = (dishName) => {
@@ -210,6 +215,7 @@ class RestaurantController {
 
     // recibe el nombre del tipo de formulario a mostrar
     handleShowForm = (gestion) => {
+        this[VIEW].hideLogin();
         const gestiones = [
             { nombre: "addDish", show: () => this[VIEW].addDishForm(this[MODEL].categories, this[MODEL].allergens), bind: () => this[VIEW].bindNewDishForm(this.handleCreateDish) },
             { nombre: "removeDish", show: () => this[VIEW].removeDishForm(this[MODEL].dishes), bind: () => this[VIEW].bindRemoveDishForm(this.handleRemoveDish) },
@@ -398,8 +404,32 @@ class RestaurantController {
 
     handleLoginForm = () => {
         this[VIEW].showLogin();
-        //this[VIEW].bindLogin(this.handleLogin);
+        this[VIEW].bindLogin(this.handleLogin);
     };
+
+    handleLogin = (username, password) => {
+        if (this[AUTH].validateUser(username, password)) {
+            this[USER] = this[AUTH].getUser(username);
+            this.onOpenSession();
+        } else {
+            try {
+                this[VIEW].showInvalidUserMessage();
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+    };
+
+    onOpenSession() {
+        this.onInit();
+        this[VIEW].initHistory();
+        this[VIEW].showAuthUserProfile(this[USER]);
+        this[VIEW].showAdminMenu();
+        this[VIEW].bindManagement(this.handleShowForm);
+    }
+
+
 
 }
 export default RestaurantController;

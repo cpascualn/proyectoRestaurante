@@ -543,6 +543,9 @@ class RestaurantView {
 						href="#modify-category"
 						data-gestion="modifyCat">Modificar
 						Categoria</a></li>
+				<li><a class="dropdown-item"
+						href="#generate-objects"
+						data-gestion="genObjects">Generar Objetos</a></li>
 			</ul>
 		</div>
 	</li>
@@ -1155,6 +1158,48 @@ creada.</div>`,
 		messageModal.show();
 	}
 
+	genObjectsForm() {
+		this.formWrap.replaceChildren();
+		this.headText.innerHTML = 'GENERAR OBJETOS ACTUALES';
+
+		this.categories.innerHTML = '';
+		this.list.innerHTML = '';
+
+		this.formWrap.insertAdjacentHTML('beforeend', `
+		<form class="Form" id="Form" name="fGenObjects" role="form" novalidate>
+		<button type="submit" class="btn btn-primary genButton"  name="genObjects" id="genObjects">GENERAR</button>
+		</div>
+		</form> 
+		<div id="genObjResult"></div>
+		`);
+	}
+	bindGenObjectsForm(handler) {
+		let boton = document.getElementById('genObjects');
+
+		boton.addEventListener('click', (event) => {
+			handler();
+		});
+	}
+	showGenObjectsResult(generado) {
+		let resultDiv = document.getElementById('genObjResult');
+		resultDiv.replaceChildren();
+		if (generado) {
+			resultDiv.insertAdjacentHTML('beforeend', `
+			<div class="container my3"><div class="alert alert-success" role="alert">
+		<strong>ARCHIVO CREADO CORRECTAMENTE</strong>
+		</div></div>
+			`);
+		} else {
+			resultDiv.insertAdjacentHTML('beforeend', `
+			<div class="container my3"><div class="alert alert-warning" role="alert">
+		<strong>El archivo no se pudo crear</strong>
+		</div></div>
+			`);
+		}
+	}
+
+
+
 
 	showSelectOptions(select, options) {
 
@@ -1306,7 +1351,7 @@ creada.</div>`,
 	}
 
 	initHistory() {
-		history.replaceState({ action: 'init' },null, "#");
+		history.replaceState({ action: 'init' }, null, "#");
 	}
 
 	showAuthUserProfile(user) {

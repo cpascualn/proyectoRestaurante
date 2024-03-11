@@ -6,12 +6,14 @@ if (isset($_FILES['jsonBlob'])) {
 
     // $ruta = 'http://127.0.0.1:5500/backup/';
     $ruta = 'H:\Mi unidad\2ºDAW\DWEC\PRACTICA_RESTAURANTE\proyectoRestaurante\backup/';
+    $ruta2 = 'backup/';
 
     $contenido = file_get_contents($_FILES['jsonBlob']['tmp_name']);
     $nombreArchivo = $ruta . date('Ymd_His') . '.json';
-
+    $nombreArchivo2 = $ruta2 . date('Ymd_His') . '.json';
     // Escribe los datos en el archivo
-    file_put_contents($nombreArchivo, $contenido);
+    // file_put_contents($nombreArchivo, $contenido);
+    file_put_contents($nombreArchivo2, $contenido);
 
     echo json_encode("archivo  $nombreArchivo creado");
 } else {

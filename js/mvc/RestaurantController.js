@@ -238,7 +238,8 @@ class RestaurantController {
             { nombre: "manageMenu", show: () => this[VIEW].manageMenuForm(this[MODEL].menus, this[MODEL].dishes), bind: () => this[VIEW].bindManageMenuForm(this.handlemanageMenu) },
             { nombre: "manageCat", show: () => this[VIEW].manageCatForm(this[MODEL].categories), bind: () => this[VIEW].bindmanageCatForm(this.handleManageCategories) },
             { nombre: "addRest", show: () => this[VIEW].addRestForm(), bind: () => this[VIEW].bindAddRestForm(this.handleCreateRestaurant) },
-            { nombre: "modifyCat", show: () => this[VIEW].modifyCatForm(this[MODEL].dishes, this[MODEL].categories), bind: () => this[VIEW].bindCatForm(this.handleModifyCat) }
+            { nombre: "modifyCat", show: () => this[VIEW].modifyCatForm(this[MODEL].dishes, this[MODEL].categories), bind: () => this[VIEW].bindCatForm(this.handleModifyCat) },
+            { nombre: "genObjects", show: () => this[VIEW].genObjectsForm(), bind: () => this[VIEW].bindGenObjectsForm(this.handleCreateJson) }
         ];
 
         let funcion = gestiones.find(ges => ges.nombre === gestion);
@@ -479,31 +480,73 @@ class RestaurantController {
         this[VIEW].hideForm();
     }
 
-    handleCreateJson = (objects) => {
-        let formData = new FormData();
-        let product = {
-            id: 123,
-            name: 'PC',
-            brand: 'HP',
-            model: 'EliteBook'
+    handleCreateJson = () => {
+        let creado = false;
+        let ObjsJson;
+        try {
+            ObjsJson = this.createObjectsJson();
+            console.log(ObjsJson);
+            //  objects son todos los objetos actuales 
+            let formData = new FormData();
+            let blob = new Blob([ObjsJson], { type: "application/json" });
+            let this1 = this;
+            formData.append("jsonBlob", blob);
+            fetch("http://localhost/practica9js/crearfichero.php", {
+                method: 'post',
+                body: formData
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                // llamar a metodo que muestre archivo creado
+                console.dir(data);
+                creado = true;
+                this1[VIEW].showGenObjectsResult(creado);
+            }).catch(function (err) {
+                console.log('No se ha recibido respuesta.');
+                this1[VIEW].showGenObjectsResult(creado);
+            });
+        } catch (error) {
+            console.log(error);
         }
-        //objects son todos los objetos actuales 
-        let blob = new Blob([JSON.stringify(product)], { type: "text/xml" });
-        formData.append("jsonBlob", blob);
-        fetch("http://localhost/practica9js/crearfichero.php", {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
+    }
 
-            // llamar a metodo que muestre archivo creado
-            console.dir(data);
+    createObjectsJson = () => {
+        let categories = new Map(), dishes = new Map(), allergens = new Map(), menus = new Map(), restaurants = new Map();
 
-        }).catch(function (err) {
-            console.log('No se ha recibido respuesta.');
-        });
+        let datos = this[MODEL];
+        for (const categoria of datos.categories) {
+            categories.set(categoria.name, { "name": categoria.name, "description": categoria.description })
+        }
 
+
+        for (const allergen of datos.allergens) {
+            allergens.set(allergen.name, { "name": allergen.name, "description": allergen.description })
+        }
+
+        for (const dish of datos.dishes) {
+            dishes.set(dish.dish.name, { "name": dish.dish.name, "description": dish.dish.description, "ingredients": dish.dish.ingredients, "image": dish.dish.image, "categories": dish.categories.map(categ => categ.name), "allergens": dish.allergens.map(aller => aller.name) });
+        }
+
+
+        for (const menu of datos.menus) {
+            menus.set(menu.menu.name, { "name": menu.menu.name, "description": menu.menu.description, "dishes": menu.dishes.map(dish => dish.dish.name) });
+        }
+
+
+        for (const restaurant of datos.restaurants) {
+            restaurants.set(restaurant.name, { "name": restaurant.name, "description": restaurant.description, "location": restaurant.location });
+        }
+
+        let combinedObject = {
+            categories: [...categories.values()],
+            allergens: [...allergens.values()],
+            dishes: [...dishes.values()],
+            menus: [...menus.values()],
+            restaurants: [...restaurants.values()]
+        };
+        let json = JSON.stringify(combinedObject);
+
+        return json;
     }
 }
 export default RestaurantController;

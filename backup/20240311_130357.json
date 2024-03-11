@@ -1,0 +1,289 @@
+{
+    "categories": [
+        {
+            "name": "Carne",
+            "description": "disfrute de nuestras carnes"
+        },
+        {
+            "name": "Pasta",
+            "description": "la mejor pasta"
+        },
+        {
+            "name": "Postres",
+            "description": "deleite su paladar"
+        }
+    ],
+    "allergens": [
+        {
+            "name": "gluten",
+            "description": "Proteína encontrada en trigo, cebada y centeno."
+        },
+        {
+            "name": "cacahuetes",
+            "description": "Leguminosa que puede causar alergias graves."
+        },
+        {
+            "name": "lácteos",
+            "description": "Productos lácteos como leche, queso y mantequilla."
+        },
+        {
+            "name": "huevos",
+            "description": "Alimento común que puede provocar alergias en algunas personas."
+        }
+    ],
+    "dishes": [
+        {
+            "name": "Chuleton Cordero",
+            "description": "Chuleton de Cordero con patatas cocidas en salsa de tomate",
+            "ingredients": [
+                "cordero",
+                "tomate",
+                "patata cocida"
+            ],
+            "image": "img/Platos/cordero.jpg",
+            "categories": [
+                "Carne"
+            ],
+            "allergens": []
+        },
+        {
+            "name": "Albondigas",
+            "description": "Albondigas con tomate y patatas fritas",
+            "ingredients": [
+                "carne cerdo",
+                "tomate",
+                "patata frita"
+            ],
+            "image": "img/Platos/albondigas.jpg",
+            "categories": [
+                "Carne"
+            ],
+            "allergens": []
+        },
+        {
+            "name": "Bistec",
+            "description": "carne de res con patatas",
+            "ingredients": [
+                "carne de res",
+                "patatas fritas"
+            ],
+            "image": "img/Platos/bistec.jpg",
+            "categories": [
+                "Carne"
+            ],
+            "allergens": []
+        },
+        {
+            "name": "CheeseBurguer",
+            "description": "hamburguesa de vacuno con queso",
+            "ingredients": [
+                "carne de vacuno",
+                "queso cheddar",
+                "lechuga",
+                "bacon",
+                "pan hamburguesa"
+            ],
+            "image": "img/Platos/cheeseburguer.jpg",
+            "categories": [
+                "Carne"
+            ],
+            "allergens": [
+                "gluten",
+                "lácteos"
+            ]
+        },
+        {
+            "name": "Pesto",
+            "description": "pasta al pesto",
+            "ingredients": [
+                "pasta",
+                "queso",
+                "salsa pesto"
+            ],
+            "image": "img/Platos/pesto.jpg",
+            "categories": [
+                "Pasta"
+            ],
+            "allergens": [
+                "gluten"
+            ]
+        },
+        {
+            "name": "Bolognesa",
+            "description": "pasta con carne picada y tomate",
+            "ingredients": [
+                "pasta",
+                "queso",
+                "carne de vacuno",
+                "tomate"
+            ],
+            "image": "img/Platos/bolognesa.jpg",
+            "categories": [
+                "Pasta"
+            ],
+            "allergens": [
+                "gluten"
+            ]
+        },
+        {
+            "name": "Carbonara",
+            "description": "pasta carbonara con nata y bacon",
+            "ingredients": [
+                "pasta",
+                "queso",
+                "bacon",
+                "salsa carbonara"
+            ],
+            "image": "img/Platos/carbonara.jpg",
+            "categories": [
+                "Pasta"
+            ],
+            "allergens": [
+                "gluten",
+                "lácteos",
+                "huevos"
+            ]
+        },
+        {
+            "name": "Tomate Con Bacon",
+            "description": "pasta con tomate y bacon",
+            "ingredients": [
+                "pasta",
+                "queso",
+                "bacon",
+                "tomate"
+            ],
+            "image": "img/Platos/bacontomate.jpg",
+            "categories": [
+                "Pasta"
+            ],
+            "allergens": [
+                "gluten"
+            ]
+        },
+        {
+            "name": "Coulant de chocolate",
+            "description": "coulant",
+            "ingredients": [
+                "chocolate",
+                "harina",
+                "huevo"
+            ],
+            "image": "img/Platos/coulant.jpg",
+            "categories": [
+                "Postres"
+            ],
+            "allergens": [
+                "cacahuetes",
+                "lácteos"
+            ]
+        },
+        {
+            "name": "Bola de helado",
+            "description": "bola de helado sabores a elegir",
+            "ingredients": [
+                "leche",
+                "chocolate",
+                "vainilla",
+                "fresa"
+            ],
+            "image": "img/Platos/bolashelado.jpg",
+            "categories": [
+                "Postres"
+            ],
+            "allergens": [
+                "cacahuetes",
+                "lácteos"
+            ]
+        },
+        {
+            "name": "Flan de huevo",
+            "description": "flan",
+            "ingredients": [
+                "leche",
+                "huevo"
+            ],
+            "image": "img/Platos/flan.jpg",
+            "categories": [
+                "Postres"
+            ],
+            "allergens": [
+                "gluten",
+                "cacahuetes",
+                "lácteos",
+                "huevos"
+            ]
+        },
+        {
+            "name": "Tarta de queso",
+            "description": "tarta queso",
+            "ingredients": [
+                "queso",
+                "tarta"
+            ],
+            "image": "img/Platos/tarta.jpg",
+            "categories": [
+                "Postres"
+            ],
+            "allergens": [
+                "cacahuetes",
+                "lácteos"
+            ]
+        }
+    ],
+    "menus": [
+        {
+            "name": "menu1",
+            "description": "hamburguesa, pesto, flan",
+            "dishes": [
+                "CheeseBurguer",
+                "Pesto",
+                "Flan de huevo"
+            ]
+        },
+        {
+            "name": "menu2",
+            "description": "bistec, carbonara, coulant",
+            "dishes": [
+                "Bistec",
+                "Carbonara",
+                "Coulant de chocolate"
+            ]
+        },
+        {
+            "name": "menu3",
+            "description": "chuleton, bolognesa, tarta",
+            "dishes": [
+                "Chuleton Cordero",
+                "Bolognesa",
+                "Tarta de queso"
+            ]
+        }
+    ],
+    "restaurants": [
+        {
+            "name": "Restaurante de Madrid",
+            "description": "Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Madrid, donde cada plato es una celebración de los sabores y la cultura de España, ubicado en el bullicioso centro de la capital.",
+            "location": {
+                "latitude": 33,
+                "longitude": 66
+            }
+        },
+        {
+            "name": "Restaurante de Barcelona",
+            "description": "Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Barcelona, donde cada plato es una celebración de los sabores.",
+            "location": {
+                "latitude": 55,
+                "longitude": 110
+            }
+        },
+        {
+            "name": "Restaurante de Sevilla",
+            "description": "Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Sevilla, donde cada plato es una celebración de los sabores y la cultura de España, ubicado en el bullicioso centro de la capital Andaluza.",
+            "location": {
+                "latitude": 200,
+                "longitude": 100
+            }
+        }
+    ]
+}

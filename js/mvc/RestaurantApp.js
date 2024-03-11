@@ -48,8 +48,6 @@ const historyActions = {
     showFavourites: (state) => {
         RestaurantApp.handleShowFavourites(state.favoritos);
     },
-
-
 };
 
 window.addEventListener('popstate', (event) => {

@@ -16,7 +16,7 @@ class RestaurantController {
 
         // Eventos iniciales del Controlador
         this.onLoad();
-        // this.onInit();
+        //  this.onInit();
 
 
         this[VIEW].bindInit(this.handleInit);
@@ -107,30 +107,28 @@ class RestaurantController {
                 } catch (error) {
                     console.log(error);
                 }
-            })
-            .catch(error => {
+            }).then(() => {
+                const userCookie = getCookie('activeUser');
+
+                if (userCookie) {
+                    const user = this[AUTH].getUser(userCookie);
+                    if (user) {
+                        this[USER] = user;
+                        this.onOpenSession();
+                    }
+                } else {
+                    this.onCloseSession();
+                }
+            }).catch(error => {
                 // Maneja cualquier error que ocurra durante la solicitud
                 console.error('Ocurrió un error al cargar el archivo JSON:', error);
             });
-
-        // this[LOAD_MANAGER_OBJECTS]();
-
 
 
         if (getCookie('accetedCookieMessage') !== 'true') {
             this[VIEW].showCookiesMessage();
         }
-        const userCookie = getCookie('activeUser');
 
-        if (userCookie) {
-            const user = this[AUTH].getUser(userCookie);
-            if (user) {
-                this[USER] = user;
-                this.onOpenSession();
-            }
-        } else {
-            this.onCloseSession();
-        }
     };
 
     RandDishes() {   // recoger los objetos dish en un array
@@ -479,6 +477,33 @@ class RestaurantController {
             this[VIEW].showDishes([]);
         }
         this[VIEW].hideForm();
+    }
+
+    handleCreateJson = (objects) => {
+        let formData = new FormData();
+        let product = {
+            id: 123,
+            name: 'PC',
+            brand: 'HP',
+            model: 'EliteBook'
+        }
+        //objects son todos los objetos actuales 
+        let blob = new Blob([JSON.stringify(product)], { type: "text/xml" });
+        formData.append("jsonBlob", blob);
+        fetch("http://localhost/practica9js/crearfichero.php", {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+
+            // llamar a metodo que muestre archivo creado
+            console.dir(data);
+
+        }).catch(function (err) {
+            console.log('No se ha recibido respuesta.');
+        });
+
     }
 }
 export default RestaurantController;

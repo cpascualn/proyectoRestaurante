@@ -16,59 +16,47 @@ class RestaurantController {
 
         // Eventos iniciales del Controlador
         this.onLoad();
-        this.onInit();
+        // this.onInit();
 
 
         this[VIEW].bindInit(this.handleInit);
     }
 
-    [LOAD_MANAGER_OBJECTS]() {
+    [LOAD_MANAGER_OBJECTS](datos) {
+        let categories = new Map(), dishes = new Map(), allergens = new Map(), menus = new Map(), restaurants = new Map();
 
-        let cat1 = this[MODEL].createCategory('Carne', 'disfrute de nuestras carnes');
-        let dish11 = this[MODEL].createDish('Chuleton Cordero', 'Chuleton de Cordero con patatas cocidas en salsa de tomate ', ['cordero', 'tomate', 'patata cocida'], 'img/Platos/cordero.jpg');
-        let dish12 = this[MODEL].createDish('Albondigas', 'Albondigas con tomate y patatas fritas', ['carne cerdo', 'tomate', 'patata frita'], 'img/Platos/albondigas.jpg');
-        let dish13 = this[MODEL].createDish('Bistec', 'carne de res con patatas', ['carne de res', 'patatas fritas'], 'img/Platos/bistec.jpg');
-        let dish14 = this[MODEL].createDish('CheeseBurguer', 'hamburguesa de vacuno con queso', ['carne de vacuno', 'queso cheddar', 'lechuga', 'bacon', 'pan hamburguesa'], 'img/Platos/cheeseburguer.jpg');
+        // recoger los datos del json y meterlos al servidor
+        for (const categoria of datos.categories) {
+            categories.set(categoria.name, this[MODEL].createCategory(categoria.name, categoria.description))
+        }
 
-        let cat2 = this[MODEL].createCategory('Pasta', 'la mejor pasta');
-        let dish21 = this[MODEL].createDish('Pesto', 'pasta al pesto', ['pasta', 'queso', 'salsa pesto'], 'img/Platos/pesto.jpg');
-        let dish22 = this[MODEL].createDish('Bolognesa', 'pasta con carne picada y tomate', ['pasta', 'queso', 'carne de vacuno', 'tomate'], 'img/Platos/bolognesa.jpg');
-        let dish23 = this[MODEL].createDish('Carbonara', 'pasta carbonara con nata y bacon', ['pasta', 'queso', 'bacon', 'salsa carbonara'], 'img/Platos/carbonara.jpg');
-        let dish24 = this[MODEL].createDish('Tomate Con Bacon', 'pasta con tomate y bacon', ['pasta', 'queso', 'bacon', 'tomate'], 'img/Platos/bacontomate.jpg');
+        for (const allergen of datos.allergens) {
+            allergens.set(allergen.name, this[MODEL].createAllergen(allergen.name, allergen.description))
+        }
 
-        let cat3 = this[MODEL].createCategory('Postres', 'deleite su paladar');
-        let dish31 = this[MODEL].createDish('Coulant de chocolate', 'coulant', ['chocolate', 'harina', 'huevo'], 'img/Platos/coulant.jpg');
-        let dish32 = this[MODEL].createDish('Bola de helado', 'bola de helado sabores a elegir', ['leche', 'chocolate', 'vainilla', 'fresa'], 'img/Platos/bolashelado.jpg');
-        let dish33 = this[MODEL].createDish('Flan de huevo', 'flan', ['leche', 'huevo'], 'img/Platos/flan.jpg');
-        let dish34 = this[MODEL].createDish('Tarta de queso', 'tarta queso', ['queso', 'tarta'], 'img/Platos/tarta.jpg');
+        for (const dish of datos.dishes) {
+            dishes.set(dish.name, this[MODEL].createDish(dish.name, dish.description, dish.ingredients, dish.image));
 
-        let al1 = this[MODEL].createAllergen('gluten', 'Proteína encontrada en trigo, cebada y centeno.');
-        let al2 = this[MODEL].createAllergen('cacahuetes', 'Leguminosa que puede causar alergias graves.');
-        let al3 = this[MODEL].createAllergen('lácteos', 'Productos lácteos como leche, queso y mantequilla.');
-        let al4 = this[MODEL].createAllergen('huevos', 'Alimento común que puede provocar alergias en algunas personas.');
+            for (const categ of dish.categories) {
+                this[MODEL].assignCategoryToDish(categories.get(categ), dishes.get(dish.name))
+            }
 
-        let menu1 = this[MODEL].createMenu('menu1', 'hamburguesa,pesto,flan');
-        let menu2 = this[MODEL].createMenu('menu2', 'bistec,carbonara,coulant');
-        let menu3 = this[MODEL].createMenu('menu3', 'chuleton,bolognesa,tarta');
+            for (const aller of dish.allergens) {
+                this[MODEL].assignAllergenToDish(allergens.get(aller), dishes.get(dish.name));
+            }
+        }
 
-        let rest1 = this[MODEL].createRestaurant('Restaurante de Madrid', 'Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Madrid, donde cada plato es una celebración de los sabores y la cultura de España, ubicado en el bullicioso centro de la capital.', new Coordinate(33, 66));
-        let rest2 = this[MODEL].createRestaurant('Restaurante de Barcelona', 'Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Barcelona, donde cada plato es una celebración de los sabores.', new Coordinate(55, 110));
-        let rest3 = this[MODEL].createRestaurant('Restaurante de Sevilla', 'Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Sevilla, donde cada plato es una celebración de los sabores y la cultura de España, ubicado en el bullicioso centro de la capital Andaluza.', new Coordinate(200, 100));
+        for (const menu of datos.menus) {
 
+            menus.set(menu.name, this[MODEL].createMenu(menu.name, menu.description));
+            for (const dish of menu.dishes) {
+                this[MODEL].assignDishToMenu(menus.get(menu.name), dishes.get(dish))
+            }
+        }
 
-        this[MODEL].assignAllergenToDish(al1, dish14, dish21, dish22, dish23, dish24, dish33);
-        this[MODEL].assignAllergenToDish(al2, dish31, dish32, dish33, dish34);
-        this[MODEL].assignAllergenToDish(al3, dish31, dish32, dish33, dish34, dish23, dish14);
-        this[MODEL].assignAllergenToDish(al4, dish33, dish23);
-
-        this[MODEL].assignCategoryToDish(cat1, dish11, dish12, dish13, dish14)
-        this[MODEL].assignCategoryToDish(cat2, dish21, dish22, dish23, dish24)
-        this[MODEL].assignCategoryToDish(cat3, dish31, dish32, dish33, dish34)
-
-        this[MODEL].assignDishToMenu(menu1, dish14, dish21, dish33)
-        this[MODEL].assignDishToMenu(menu2, dish13, dish23, dish31)
-        this[MODEL].assignDishToMenu(menu3, dish11, dish22, dish34)
-
+        for (const restaurant of datos.restaurants) {
+            restaurants.set(restaurant.name, this[MODEL].createRestaurant(restaurant.name, restaurant.description, restaurant.location));
+        }
     }
 
 
@@ -92,7 +80,42 @@ class RestaurantController {
     }
 
     onLoad = () => { // cargar los objetos
-        this[LOAD_MANAGER_OBJECTS]();
+        fetch('js/datos.json')
+            .then(response => {
+                // Verifica si la solicitud fue exitosa
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo JSON');
+                }
+                // Parsea la respuesta como JSON y la retorna
+                return response.json();
+            })
+            .then(data => {
+                // recoger el json y transformar los objetos
+                this[LOAD_MANAGER_OBJECTS](data);
+            }).then(() => {
+                // una vez se cargan los objetos
+                // mostrar el menu de categorias , 3 platos aleatorios y cargar el desplegable con los restaurantes
+                try {
+                    this[VIEW].showCategories(this[MODEL].categories);
+                    this[VIEW].loadRestaurants(this[MODEL].restaurants);
+                    // Enlazamos handlers con la vista
+                    this[VIEW].bindAllerList(this.handleAllergenList);
+                    this[VIEW].bindMenuList(this.handleMenuList);
+                    this[VIEW].bindRestaurant(this.handleRestaurants);
+                    this[VIEW].bindCloseWindows(this.handleCloseWindows);
+                    this.onInit();
+                } catch (error) {
+                    console.log(error);
+                }
+            })
+            .catch(error => {
+                // Maneja cualquier error que ocurra durante la solicitud
+                console.error('Ocurrió un error al cargar el archivo JSON:', error);
+            });
+
+        // this[LOAD_MANAGER_OBJECTS]();
+
+
 
         if (getCookie('accetedCookieMessage') !== 'true') {
             this[VIEW].showCookiesMessage();
@@ -107,19 +130,6 @@ class RestaurantController {
             }
         } else {
             this.onCloseSession();
-        }
-
-        // mostrar el menu de categorias , 3 platos aleatorios y cargar el desplegable con los restaurantes
-        try {
-            this[VIEW].showCategories(this[MODEL].categories);
-            this[VIEW].loadRestaurants(this[MODEL].restaurants);
-            // Enlazamos handlers con la vista
-            this[VIEW].bindAllerList(this.handleAllergenList);
-            this[VIEW].bindMenuList(this.handleMenuList);
-            this[VIEW].bindRestaurant(this.handleRestaurants);
-            this[VIEW].bindCloseWindows(this.handleCloseWindows);
-        } catch (error) {
-            console.log(error);
         }
     };
 
@@ -458,7 +468,7 @@ class RestaurantController {
     }
 
     handleShowFavourites = (favoritos) => {
-        
+
         if (favoritos) {
             let platosFavoritos = [...this[MODEL].dishes].filter(dish => favoritos.includes(dish.dish.name)).map(dish => dish.dish);
             this[VIEW].showDishes(platosFavoritos);

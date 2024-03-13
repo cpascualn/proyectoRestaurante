@@ -462,6 +462,18 @@ class RestaurantView {
 
 			this.restaurants.append(container);
 		}
+
+		// añadir opcion ver todos los mapas
+		let container = document.createElement('li');
+		let link = document.createElement('a');
+		link.href = '#VerTodos';
+		link.classList.add('dropdown-item');
+		link.innerHTML = "Ver todos los mapas";
+		link.dataset.restaurant = "VerTodos";
+		container.appendChild(link);
+
+		this.restaurants.append(container);
+
 	}
 
 	showRestaurant(restaurant) { // mostrar la ficha del restaurante
@@ -471,24 +483,37 @@ class RestaurantView {
 		this.list.innerHTML = '';
 
 		let location = restaurant.location;
-		let maps;
-		if (restaurant.name === 'Restaurante de Madrid') {
-			maps = `<div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q=madrid+(Mi%20nombre%20de%20egocios)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/car-satnav-gps/">GPS devices</a></iframe></div>`
-		} else if (restaurant.name === 'Restaurante de Barcelona') {
-			maps = `<div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q=Les%20Rambles,%201%20Barcelona,%20Spain+(Mi%20nombre%20de%20egocios)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/car-satnav-gps/">GPS car tracker</a></iframe></div>`;
 
-		} else if (restaurant.name === 'Restaurante de Sevilla') {
-			maps = `<div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q=sevilla+(Mi%20nombre%20de%20egocios)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/car-satnav-gps/">Car Navigation Systems</a></iframe></div>`;
-		}
 		const container = document.createElement('div');
 		container.insertAdjacentHTML('beforeend', `<div>
 			<h5>${restaurant.description}</h5>
 			<h3>LOCALIZACION</h3>
 			<h5>LATITUD:${location.latitude}</h5>
 			<h5>LONGITUD:${location.longitude}</h5>
-			${maps}
+			<div id="mapRestaurant" ></div>
+			
 			</div>`);
 		this.list.append(container);
+
+		let latitud = location.latitude;
+		let longitud = location.longitude;
+
+
+
+		var map = L.map('mapRestaurant').setView([latitud, longitud], 10);
+
+
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+			maxZoom: 18,
+		}).addTo(map);
+
+
+		L.marker([latitud, longitud]).addTo(map)
+			.bindPopup('Ubicación específica')
+			.openPopup();
+
+
 	}
 
 	closeWindows() {
@@ -1007,21 +1032,58 @@ creada.</div>`,
 		<div class="form-group">
 			<h3>Localizacion</h3>
 			<label for="latitud">latitud</label>
-			<input type="text" name="latitud" required>
+			<input type="text" name="latitud" id="lati" required>
 			<div class="invalid-feedback">El campo es obligatorio.</div>
 				<div class="valid-feedback">Correcto.</div>
 
 			<label for="longitud">longitud</label>
-			<input type="text" name="longitud" required>
+			<input type="text" name="longitud" id="longi" required>
 			<div class="invalid-feedback">El campo es obligatorio.</div>
 				<div class="valid-feedback">Correcto.</div>
 		</div>
+
+		<div id="map" style="height: 400px;"></div>
 
 		<div class="form-group">
 			<button type="submit" class="btn btn-success">enviar</button>
 		</div>
 		</form>
 		`);
+
+
+
+
+
+		var map = L.map('map').setView([40.4637, -3.7492], 6);
+
+
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+			maxZoom: 18,
+		}).addTo(map);
+
+		// Crear un marcador editable en el mapa
+		var marker = L.marker([40.4637, -3.7492], { draggable: true }).addTo(map);
+
+
+		let lati = document.getElementById("lati");
+		let longi = document.getElementById("longi");
+		marker.on('dragend', function (event) {
+			var markerLocation = event.target.getLatLng();
+			lati.value = markerLocation.lat;
+			longi.value = markerLocation.lng;
+			console.log(markerLocation.lat, markerLocation.lng);
+		});
+
+
+		var geocoder = L.Control.geocoder({
+			defaultMarkGeocode: false
+		}).on('markgeocode', function (event) {
+			var latlng = event.geocode.center;
+			L.marker(latlng).addTo(map)
+				.bindPopup(event.geocode.name)
+				.openPopup();
+		}).addTo(map);
 	}
 	bindAddRestForm(handler) {
 		addRestValidation(handler);
@@ -1428,6 +1490,50 @@ creada.</div>`,
 		this.categories.replaceChildren();
 	}
 
+
+	showAllMaps(restaurants) {
+		this.headText.innerHTML = "TODAS LAS UBICACIONES";
+
+		this.categories.innerHTML = '';
+		this.list.innerHTML = '';
+
+
+
+		const container = document.createElement('div');
+		container.insertAdjacentHTML('beforeend', `<div>
+
+			<div id="mapRestaurant" ></div>
+			
+			</div>`);
+		this.list.append(container);
+
+
+		var map = L.map('mapRestaurant').setView([40.4637, -3.7492], 4);
+		for (const restaurant of restaurants) {
+			let location = restaurant.location;
+			let latitud = location.latitude;
+			let longitud = location.longitude;
+
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+				maxZoom: 18,
+			}).addTo(map);
+
+
+			L.marker([latitud, longitud]).addTo(map)
+				.bindPopup(restaurant.name)
+		}
+
+		var geocoder = L.Control.geocoder({
+			defaultMarkGeocode: false
+		}).on('markgeocode', function (event) {
+			var latlng = event.geocode.center;
+			L.marker(latlng).addTo(map)
+				.bindPopup(event.geocode.name)
+				.openPopup();
+		}).addTo(map);
+
+	}
 
 
 

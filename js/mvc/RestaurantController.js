@@ -205,11 +205,17 @@ class RestaurantController {
     }
 
     handleRestaurants = (restName) => { // mostrar restaurante pulsado en el menu
-        let restaurant = [...this[MODEL].restaurants].find(rest => rest.name.replace(/\s/g, '') === restName);
-        this[VIEW].showRestaurant(restaurant);
+        console.log(restName);
+        if (restName == "VerTodos") {
+            this[VIEW].showAllMaps([...this[MODEL].restaurants]);
+        } else {
+            let restaurant = [...this[MODEL].restaurants].find(rest => rest.name.replace(/\s/g, '') === restName);
+            this[VIEW].showRestaurant(restaurant);
+        }
         this[VIEW].modifyBreadcrumb(restName);
         this[VIEW].hideForm();
         this[VIEW].hideLogin();
+
     }
 
     handleShowDish = (dishName) => {

@@ -265,24 +265,24 @@
             "name": "Restaurante de Madrid",
             "description": "Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Madrid, donde cada plato es una celebración de los sabores y la cultura de España, ubicado en el bullicioso centro de la capital.",
             "location": {
-                "latitude": 33,
-                "longitude": 66
+                "latitude": 40.396764305572056,
+                "longitude": -3.703224071557967
             }
         },
         {
             "name": "Restaurante de Barcelona",
             "description": "Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Barcelona, donde cada plato es una celebración de los sabores.",
             "location": {
-                "latitude": 55,
-                "longitude": 110
+                "latitude": 41.376808565702355,
+                "longitude": 2.1784774116847854
             }
         },
         {
             "name": "Restaurante de Sevilla",
             "description": "Explora la riqueza de la cocina española en nuestro restaurante en el vibrante corazón de Sevilla, donde cada plato es una celebración de los sabores y la cultura de España, ubicado en el bullicioso centro de la capital Andaluza.",
             "location": {
-                "latitude": 200,
-                "longitude": 100
+                "latitude": 37.37015718405753,
+                "longitude": -5.999738168025358
             }
         }
     ]
